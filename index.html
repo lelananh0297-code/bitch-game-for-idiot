@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#26734D">
+<title>English Dino Speaking Challenge</title>
+<style>
+:root{--sky:#87CEEB;--grass:#65B85C;--forest:#26734D;--yellow:#FFD166;--orange:#FF9F43;--cream:#FFF9ED;--ink:#263238;--muted:#5b6b73;--line:#f0e3c4;
+font-family:"Nunito","Trebuchet MS",ui-rounded,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--cream)}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;padding:12px 12px 32px;overflow-x:hidden;min-height:100vh;background:radial-gradient(circle at 8% 0,#fff0c4,transparent 38%),radial-gradient(circle at 100% 8%,#d6efff,transparent 40%),var(--cream)}
+.wrap{max-width:920px;margin:0 auto}
+/* header */
+.top{background:linear-gradient(135deg,var(--forest),#3f9c66);color:#fff;border-radius:24px;padding:14px 16px 14px;box-shadow:0 6px 0 #1b5a3b}
+h1{margin:0 0 10px;text-align:center;font-size:clamp(17px,4.4vw,30px);font-weight:900;letter-spacing:.8px;text-shadow:0 2px 0 #0003;line-height:1.2}
+.logo{display:inline-block;animation:bob 2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-3px) rotate(-6deg)}}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.stat{background:#ffffff26;border-radius:14px;padding:6px 4px;text-align:center;font-size:12px;font-weight:700;color:#e9fff1}
+.stat b{display:block;font-size:clamp(17px,4vw,24px);color:var(--yellow);line-height:1.2}
+.progress{height:14px;background:#00000040;border-radius:99px;overflow:hidden;margin-top:10px;border:2px solid #ffffff55}
+.progress i{display:block;height:100%;width:calc(var(--p,0)*1%);background:linear-gradient(90deg,var(--yellow),var(--orange));border-radius:99px;transition:width .5s ease}
+/* word card */
+.wordcard{margin:16px auto 14px;max-width:640px;background:#fff;border:4px solid var(--yellow);border-radius:28px;padding:10px 18px 14px;text-align:center;box-shadow:0 7px 0 #e8b64a,0 14px 24px #26323822}
+.hint{font-size:clamp(13px,3.2vw,16px);font-weight:800;color:var(--muted)}
+#word{font-size:clamp(34px,10.5vw,76px);font-weight:900;letter-spacing:3px;color:var(--forest);line-height:1.1;overflow-wrap:anywhere;text-shadow:0 3px 0 #26734d22}
+/* scene */
+#scene{position:relative;height:clamp(210px,40vw,340px);border-radius:26px;overflow:hidden;background:linear-gradient(#6fc3f2 0%,var(--sky) 55%,#d4f1ff 100%);border:4px solid #fff;box-shadow:0 8px 0 #bfe3f5,0 16px 28px #17324d2e}
+.sun{position:absolute;top:14px;right:7%;width:clamp(40px,8vw,62px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#fff4b0,#ffd166 70%);box-shadow:0 0 0 8px #ffd16655,0 0 40px #ffd166}
+.cloud{position:absolute;top:26px;left:20%;width:96px;height:28px;border-radius:30px;background:#fff;opacity:.95;animation:drift 34s linear infinite}
+.cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
+.cloud::before{width:42px;height:42px;left:14px;top:-20px}.cloud::after{width:30px;height:30px;left:46px;top:-12px}
+.cloud.c2{top:78px;left:62%;width:70px;height:22px;animation-duration:46s;opacity:.8}
+@keyframes drift{from{transform:translateX(0)}to{transform:translateX(-120vw)}}
+.hills{position:absolute;left:0;right:0;bottom:22%;height:42%;background:radial-gradient(ellipse 150px 90px at 120px 100%,#8fd48a 97%,transparent 100%);background-size:240px 100%;background-repeat:repeat-x}
+.hills.h2{height:30%;opacity:.9;background-image:radial-gradient(ellipse 110px 70px at 60px 100%,#74c46f 97%,transparent 100%);background-size:160px 100%}
+.bushes{position:absolute;left:0;right:0;bottom:23%;height:24px;background:radial-gradient(circle at 18px 24px,#3f9444 17px,transparent 18px),radial-gradient(circle at 46px 24px,#4fae4f 12px,transparent 13px);background-size:140px 24px;background-repeat:repeat-x}
+#ground{position:absolute;left:0;right:0;bottom:0;height:24%;background:repeating-linear-gradient(90deg,transparent 0 36px,#ffffff1f 36px 80px),linear-gradient(var(--grass) 0 32%,#c99a5b 32% 100%);border-top:6px solid var(--forest)}
+#scene.moving #ground{animation:gscroll .5s linear infinite}
+#scene.moving .hills{animation:hscroll 8s linear infinite}
+#scene.moving .hills.h2{animation:hscroll2 5s linear infinite}
+#scene.moving .bushes{animation:bscroll 1.1s linear infinite}
+@keyframes gscroll{to{background-position-x:-80px,0}}
+@keyframes hscroll{to{background-position-x:-480px}}
+@keyframes hscroll2{to{background-position-x:-320px}}
+@keyframes bscroll{to{background-position-x:-140px}}
+#dino{position:absolute;left:10%;bottom:20%;width:clamp(80px,16vw,130px);filter:drop-shadow(0 5px 0 #0002)}
+#dino svg{width:100%;display:block;overflow:visible}
+.leg{transform-box:fill-box;transform-origin:50% 0}
+#scene.moving .l1{animation:step .3s infinite alternate}
+#scene.moving .l2{animation:step .3s infinite alternate-reverse}
+@keyframes step{from{transform:rotate(-25deg)}to{transform:rotate(25deg)}}
+#dino.idle svg{animation:breathe 1.6s ease-in-out infinite}
+@keyframes breathe{50%{transform:translateY(-3px)}}
+#dino.jump{animation:jump .85s cubic-bezier(.3,.6,.6,1)}
+@keyframes jump{0%{transform:translateY(0) rotate(0)}45%{transform:translateY(-130%) rotate(-10deg)}100%{transform:translateY(0) rotate(0)}}
+#cactus{position:absolute;bottom:20%;left:110%;width:clamp(36px,7vw,56px);filter:drop-shadow(0 4px 0 #0002)}
+#cactus svg{width:100%;display:block}
+#banner{position:absolute;top:34%;left:50%;transform:translate(-50%,-50%) scale(0);font-weight:900;font-size:clamp(26px,8vw,54px);padding:2px 22px;border-radius:20px;background:#263238d9;text-shadow:0 3px 0 #0006;pointer-events:none;white-space:nowrap}
+#banner.show{animation:pop 1.2s ease forwards}
+@keyframes pop{15%{transform:translate(-50%,-50%) scale(1.15)}30%{transform:translate(-50%,-50%) scale(1)}85%{transform:translate(-50%,-50%) scale(1)}100%{transform:translate(-50%,-50%) scale(0)}}
+/* panels */
+.panel{background:#fff;border:2px solid var(--line);border-radius:22px;padding:14px;margin-top:14px;box-shadow:0 4px 0 var(--line)}
+.controls{display:flex;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(#fff,#fffaf0)}
+#heard{text-align:center;min-height:30px;font-size:clamp(16px,4vw,20px);font-weight:800;overflow-wrap:anywhere;color:var(--ink)}
+#heard:not(:empty){background:#fff3d6;border:2px dashed var(--orange);border-radius:16px;padding:6px 14px}
+.livetag{min-height:26px;font-weight:900;letter-spacing:1.5px;font-size:15px}
+body[data-mic=rec] .livetag::before{content:"🎧 LISTENING…";color:#b3261e;animation:blink 1s infinite}
+body[data-mic=proc] .livetag::before{content:"⏳ PROCESSING…";color:#1a5fb4}
+body[data-mic=ready] .livetag::before{content:"🎤 TAP THE MICROPHONE";color:var(--forest)}
+@keyframes blink{50%{opacity:.45}}
+#mic{position:relative;width:clamp(96px,26vw,124px);height:clamp(96px,26vw,124px);border-radius:50%;border:6px solid #fff;font-size:clamp(40px,11vw,54px);color:#fff;cursor:pointer;touch-action:manipulation;background:linear-gradient(#ffb45a,var(--orange));box-shadow:0 7px 0 #d97a1f,0 12px 22px #ff9f4366;transition:transform .12s}
+#mic:hover:not(:disabled){transform:translateY(-2px)}#mic:active:not(:disabled){transform:translateY(4px);box-shadow:0 3px 0 #d97a1f}
+#mic.rec{opacity:1;background:linear-gradient(#ff6b66,#e53935);box-shadow:0 7px 0 #a8201d;animation:ring 1.1s infinite}
+@keyframes ring{0%{box-shadow:0 7px 0 #a8201d,0 0 0 0 #e5393577}100%{box-shadow:0 7px 0 #a8201d,0 0 0 26px #e5393500}}
+#mic:disabled:not(.rec){opacity:1;cursor:progress;background:linear-gradient(#9fb4c0,#78909c);box-shadow:0 7px 0 #546e7a}
+#mic:disabled:not(.rec)::after{content:"";position:absolute;inset:-12px;border-radius:50%;border:6px solid transparent;border-top-color:var(--forest);animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+canvas{width:100%;max-width:380px;height:46px;background:#eef6fb;border:2px solid #cfe3ef;border-radius:14px}
+.micstate{font-size:13px;font-weight:800;padding:5px 14px;border-radius:99px;background:#eceff1;color:#455a64;text-align:center}
+body[data-mic=ready] .micstate,body[data-mic=done] .micstate{background:#e3f6e8;color:#14673a}
+body[data-mic=rec] .micstate{background:#fdecea;color:#b3261e}
+body[data-mic=proc] .micstate,body[data-mic=asking] .micstate{background:#e3effd;color:#1a5fb4}
+body[data-mic=err] .micstate{background:#fff0d6;color:#8a4b08}
+#status{text-align:center;color:var(--muted);font-size:14px;font-weight:600;max-width:560px}
+/* buttons */
+button.b{border:0;border-radius:14px;padding:12px 18px;font:inherit;font-weight:800;cursor:pointer;background:var(--forest);color:#fff;min-height:46px;box-shadow:0 4px 0 #1b5a3b;transition:transform .12s}
+button.b:hover:not(:disabled){transform:translateY(-1px)}button.b:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 #1b5a3b}
+button.b.s{background:#fff;color:var(--ink);border:2px solid var(--line);box-shadow:0 4px 0 var(--line)}
+button.b:disabled{opacity:.5;cursor:not-allowed}
+#startBtn{font-size:clamp(18px,5vw,24px);padding:14px 36px;background:linear-gradient(#ffd98a,var(--yellow));color:var(--ink);box-shadow:0 6px 0 #d8a62e;border-radius:18px}
+:focus-visible{outline:4px solid #1769d2;outline-offset:2px}
+/* teacher */
+details summary{font-weight:900;cursor:pointer;font-size:17px;color:var(--forest);padding:4px 0}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+textarea{width:100%;min-height:140px;font:inherit;font-weight:600;padding:12px;border:2px solid var(--line);border-radius:14px;background:#fffdf7;color:var(--ink)}
+select{font:inherit;font-weight:700;padding:11px;border-radius:14px;border:2px solid var(--line);background:#fff;color:var(--ink);min-height:46px}
+#chk{padding-left:20px;font-size:14px;line-height:1.7}
+.badge{display:inline-block;margin:6px 6px 0 0;padding:5px 12px;border-radius:99px;font-weight:800;font-size:13px}
+.ok{background:#e3f6e8;color:#14673a}.no{background:#fdecea;color:#b3261e}
+.tip{font-size:12px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.5}
+/* overlays */
+.overlay{position:fixed;inset:0;background:radial-gradient(circle at 50% 30%,#3f9c66ee,#1b4d38f5);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:20px;z-index:10}
+.overlay.hide{display:none}
+.overlay h2{margin:0;font-size:clamp(26px,7vw,46px);text-shadow:0 3px 0 #0004}
+#vText{background:#ffffff22;border:2px solid #ffffff55;border-radius:20px;padding:14px 26px;font-size:20px;line-height:1.7}
+#vText b{color:var(--yellow)}
+progress{width:min(380px,90%);height:18px;appearance:none;-webkit-appearance:none;border:0;border-radius:99px;overflow:hidden;background:#00000040}
+progress::-webkit-progress-bar{background:#00000040}
+progress::-webkit-progress-value{background:linear-gradient(90deg,var(--yellow),var(--orange));border-radius:99px}
+progress::-moz-progress-bar{background:var(--orange);border-radius:99px}
+@media (max-width:520px){.stats{gap:5px}.stat{font-size:10.5px;padding:5px 2px}.top{padding:12px 10px}.panel{padding:12px}}
+@media (prefers-reduced-motion:reduce){.cloud,.logo{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1><span class="logo">🦖</span> ENGLISH DINO SPEAKING CHALLENGE</h1>
+    <div class="stats">
+      <div class="stat">📖 Word<b id="sWord">0/0</b></div>
+      <div class="stat">⭐ Score<b id="sScore">0</b></div>
+      <div class="stat">✅ Correct<b id="sCorrect">0</b></div>
+      <div class="stat">🎯 Attempts<b id="sAtt">0</b></div>
+      <div class="stat">📈 Accuracy<b id="sAcc">0%</b></div>
+    </div>
+    <div class="progress" role="progressbar" aria-label="Vocabulary progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="progFill"></i></div>
+  </header>
+
+  <section class="wordcard">
+    <div class="hint">🎧 Listen and say the word to help Dino jump!</div>
+    <div id="word">ENGLISH DINO</div>
+  </section>
+
+  <div id="scene">
+    <div class="sun"></div><div class="cloud"></div><div class="cloud c2"></div>
+    <div class="hills"></div><div class="hills h2"></div><div class="bushes"></div>
+    <div id="ground"></div>
+    <div id="cactus"><svg viewBox="0 0 50 90"><g fill="#2e8b3d" stroke="#1d6329" stroke-width="2"><rect x="18" y="4" width="16" height="84" rx="8"/><path d="M18 52H10a4 4 0 0 1-4-4V30a5 5 0 0 1 10 0v12h2z"/><path d="M34 40h8a4 4 0 0 0 4-4V20a5 5 0 0 0-10 0v10h-2z"/></g><g stroke="#c8f2c0" stroke-width="1.5" stroke-linecap="round"><path d="M26 14v10M26 40v12M12 30v8M41 24v6"/></g></svg></div>
+    <div id="dino" class="idle">
+      <svg viewBox="0 0 160 120">
+        <path d="M6 70 Q30 60 42 62 L42 86 Q24 86 6 70Z" fill="#5fcf66" stroke="#26734D" stroke-width="3"/>
+        <g class="leg l2"><rect x="50" y="86" width="16" height="26" rx="7" fill="#3fae48" stroke="#26734D" stroke-width="3"/></g>
+        <g class="leg l2"><rect x="94" y="86" width="16" height="26" rx="7" fill="#3fae48" stroke="#26734D" stroke-width="3"/></g>
+        <ellipse cx="78" cy="68" rx="42" ry="28" fill="#5fcf66" stroke="#26734D" stroke-width="3"/>
+        <ellipse cx="82" cy="78" rx="28" ry="15" fill="#e3f8c8"/>
+        <g class="leg l1"><rect x="62" y="86" width="16" height="26" rx="7" fill="#5fcf66" stroke="#26734D" stroke-width="3"/></g>
+        <g class="leg l1"><rect x="104" y="86" width="16" height="26" rx="7" fill="#5fcf66" stroke="#26734D" stroke-width="3"/></g>
+        <path d="M30 56l6-12 6 12zM48 48l6-13 6 13zM66 44l6-13 6 13z" fill="#FF9F43" stroke="#d97a1f" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M100 56 Q110 24 128 26 L152 26 Q158 26 158 38 Q158 50 146 50 L126 50 Q120 56 116 70Z" fill="#5fcf66" stroke="#26734D" stroke-width="3"/>
+        <circle cx="132" cy="36" r="7" fill="#fff"/><circle cx="134" cy="36" r="3.6" fill="#263238"/><circle cx="135" cy="34.8" r="1.2" fill="#fff"/>
+        <circle cx="140" cy="44" r="4" fill="#ff9f9f" opacity=".7"/>
+        <path d="M143 47 Q150 51 155 45" stroke="#26734D" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div id="banner"></div>
+  </div>
+
+  <section class="panel controls">
+    <div class="livetag" aria-live="polite"></div>
+    <div id="heard"></div>
+    <button id="startBtn" class="b" disabled>▶ Start Game</button>
+    <button id="mic" aria-label="Record" disabled hidden>🎤</button>
+    <canvas id="wave" width="360" height="44" hidden></canvas>
+    <button id="stopBtn" class="b s" hidden>⏹ Stop</button>
+    <div id="micState" class="micstate">🎙️ Microphone not activated</div>
+    <div id="status">Loading…</div>
+  </section>
+
+  <section class="panel">
+    <details>
+      <summary>👩‍🏫 Teacher panel — vocabulary</summary>
+      <div class="row">
+        <select id="preset"><option value="">Choose a preset…</option></select>
+        <button id="shuffleBtn" class="b s">🔀 Shuffle</button>
+        <button id="newBtn" class="b">New game with this list</button>
+      </div>
+      <p class="tip" style="text-align:left">One word per line. Edit or delete lines freely.</p>
+      <textarea id="list" spellcheck="false"></textarea>
+    </details>
+  </section>
+
+  <section class="panel">
+    <details>
+      <summary>📶 Offline readiness &amp; microphone (teacher)</summary>
+      <div class="row"><button id="chkBtn" class="b">CHECK OFFLINE READINESS</button><button id="micOffBtn" class="b s">🎙️ Turn microphone off</button><button id="exitBtn" class="b s">⏹ Exit game</button></div>
+      <div id="badges"></div><ul id="chk"></ul>
+    </details>
+  </section>
+  <p class="tip">Speech is recognised locally in your browser by Whisper Tiny.en; no audio is sent anywhere. This checks whether the AI heard the target word, not accent or phoneme accuracy.</p>
+</div>
+
+<div id="loader" class="overlay">
+  <h2>🦖 Loading English AI…</h2>
+  <progress id="prog" max="100" value="0"></progress>
+  <div id="loadMsg">Starting…</div>
+  <button id="retryBtn" class="b" hidden>Retry loading</button>
+</div>
+
+<div id="victory" class="overlay hide">
+  <h2>🏆 You did it!</h2>
+  <div id="vText"></div>
+  <div class="row"><button id="againBtn" class="b">Play Again</button><button id="restartBtn" class="b s">Restart (reshuffle)</button></div>
+</div>
+
+<script type="module">
+const $=id=>document.getElementById(id);
+const PRESETS={
+ 'Everyday 1':'elephant\nbutterfly\nenvironment\nvegetable\nbeautiful\ndangerous\ncomfortable\nrestaurant\nadventure\ncelebrate',
+ 'Animals':'giraffe\ncrocodile\npenguin\nkangaroo\ndolphin\nrabbit\ntiger\nmonkey',
+ 'School':'homework\nlibrary\nteacher\nscience\nhistory\nexercise\nlesson\nclassroom'
+};
+for(const k in PRESETS){const o=document.createElement('option');o.value=k;o.textContent=k;$('preset').appendChild(o)}
+$('list').value=PRESETS['Everyday 1'];
+
+let transcriber=null,words=[],idx=0,correct=0,attempts=0,score=0,state='boot';
+let recorder,chunks=[],raf,recStart,lastVoice,heardVoice,sfx;
+
+/* ---------- Service worker / offline ---------- */
+let swResult='';
+const swReady=(async()=>{
+  if(!('serviceWorker' in navigator)||!location.protocol.startsWith('http'))return 'Service worker unavailable (use HTTPS or localhost)';
+  try{
+    await navigator.serviceWorker.register('sw.js');
+    await navigator.serviceWorker.ready;
+    if(!navigator.serviceWorker.controller)await new Promise(r=>{navigator.serviceWorker.addEventListener('controllerchange',r,{once:true});setTimeout(r,4000)});
+    return 'ok';
+  }catch(e){console.warn(e);return 'Service worker failed: '+(e?.message||e)}
+})();
+let gen=0;
+
+/* ---------- Model loading ---------- */
+async function loadModel(){
+  $('retryBtn').hidden=true;$('startBtn').disabled=true;
+  $('loadMsg').textContent='Preparing offline support…';swResult=await swReady;
+  try{navigator.storage?.persist?.()}catch{}
+  $('loader').classList.remove('hide');
+  let cached=false;
+  try{cached=await caches.has('transformers-cache')}catch{}
+  $('loadMsg').textContent=cached?'Model found in cache. Loading…':'First-time download (needs Internet, ~40 MB)…';
+  try{
+    const {pipeline,env}=await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2');
+    env.allowLocalModels=false;
+    transcriber=await pipeline('automatic-speech-recognition','Xenova/whisper-tiny.en',{
+      device:'wasm',dtype:'q8',
+      progress_callback:p=>{
+        if(typeof p.progress==='number')$('prog').value=p.progress;
+        if(p.status)$('loadMsg').textContent=(cached?'Loading from cache: ':'Downloading: ')+p.status+(p.file?' — '+p.file.split('/').pop():'');
+      }});
+    let nowCached=false;try{nowCached=await caches.has('transformers-cache')}catch{}
+    $('status').textContent=nowCached?'Ready ✓ Model cached on this device (offline use should work if the app files are cached too).':'Ready ✓ (model loaded; caching not confirmed, so keep Internet on).';
+    $('startBtn').disabled=false;
+    $('loader').classList.add('hide');
+    setState('ready');
+  }catch(e){
+    console.error(e);
+    $('loadMsg').textContent='Could not load the model: '+(e?.message||e)+'. Check your Internet connection.';
+    $('retryBtn').hidden=false;
+  }
+}
+$('retryBtn').onclick=loadModel;
+
+/* ---------- Sounds ---------- */
+function tone(freqs,dur=0.15,type='triangle'){
+  try{
+    sfx=sfx||new AudioContext();
+    freqs.forEach((f,i)=>{
+      const o=sfx.createOscillator(),g=sfx.createGain();
+      o.type=type;o.frequency.value=f;o.connect(g);g.connect(sfx.destination);
+      const t=sfx.currentTime+i*dur;
+      g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);
+      o.start(t);o.stop(t+dur);
+    });
+  }catch{}
+}
+
+/* ---------- Game ---------- */
+const scene=$('scene'),dino=$('dino'),cactus=$('cactus');
+function setState(s){
+  state=s;
+  const ready=s==='waiting';
+  $('mic').hidden=!(ready||s==='recording'||s==='thinking');
+  $('mic').disabled=!ready;
+  $('startBtn').hidden=!(s==='ready'||s==='boot'||s==='end');
+  $('stopBtn').hidden=s!=='recording';
+  $('wave').hidden=s!=='recording';
+}
+function parseList(){return $('list').value.split('\n').map(w=>w.trim()).filter(Boolean)}
+function updateStats(){
+  $('sWord').textContent=Math.min(idx+1,words.length)+'/'+words.length;
+  $('sScore').textContent=score;$('sCorrect').textContent=correct;$('sAtt').textContent=attempts;
+  $('sAcc').textContent=attempts?Math.round(correct/attempts*100)+'%':'0%';
+}
+function banner(t,color){const b=$('banner');b.textContent=t;b.style.color=color;b.classList.remove('show');void b.offsetWidth;b.classList.add('show')}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function newGame(reshuffle){
+  if(reshuffle){const w=shuffle(parseList());$('list').value=w.join('\n')}
+  words=parseList();
+  if(!words.length){$('status').textContent='Please add at least one word in the teacher panel.';return}
+  idx=0;correct=0;attempts=0;score=0;
+  $('victory').classList.add('hide');
+  showWord();
+}
+function showWord(){
+  const g=gen;
+  $('heard').textContent='';
+  $('word').textContent=words[idx].toUpperCase();
+  updateStats();
+  setState('running');
+  // reset cactus off-screen without transition, then run toward dino
+  cactus.style.transition='none';cactus.style.left='110%';void cactus.offsetWidth;
+  dino.className='';scene.classList.add('moving');
+  $('status').textContent='The dino is running…';
+  const stopAt=Math.max(40,(scene.clientWidth*0.1+dino.clientWidth+16)/scene.clientWidth*100);
+  cactus.style.transition='left 2.2s linear';cactus.style.left=stopAt+'%';
+  setTimeout(()=>{
+    if(g!==gen)return;
+    scene.classList.remove('moving');dino.className='idle';
+    $('status').textContent='Tap the microphone and say the word!';
+    setState('waiting');
+  },2250);
+}
+
+/* ---------- Microphone (one permission, one persistent stream) ---------- */
+let micStream=null,micCtx=null,micSrc=null,analyser=null;
+const setMic=t=>{$('micState').textContent=t};
+const micLive=()=>micStream&&micStream.active&&micStream.getAudioTracks().some(t=>t.readyState==='live');
+async function getMic(){
+  if(micLive())return micStream;           // reuse: no new permission prompt
+  setMic('🎙️ Requesting microphone permission…');
+  micStream=await navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+  micStream.getAudioTracks().forEach(t=>t.addEventListener('ended',()=>{micStream=null;setMic('⚠️ Microphone disconnected. Tap 🎤 to reconnect.')}));
+  try{micSrc?.disconnect()}catch{}
+  if(!micCtx||micCtx.state==='closed')micCtx=new AudioContext();
+  micSrc=micCtx.createMediaStreamSource(micStream);
+  analyser=micCtx.createAnalyser();analyser.fftSize=512;micSrc.connect(analyser);
+  setMic('✅ Microphone ready');
+  return micStream;
+}
+function micError(e){
+  const n=e?.name;
+  setMic('❌ Microphone error');
+  $('status').textContent=n==='NotAllowedError'?'Microphone is blocked. Click the 🔒 icon in the address bar, allow the microphone, then tap 🎤 again.'
+    :n==='NotFoundError'?'No microphone found. Connect one and try again.'
+    :'Microphone problem: '+(e?.message||e)+' (HTTPS or localhost is required).';
+}
+function releaseMic(msg){
+  cancelAnimationFrame(raf);
+  if(recorder&&recorder.state!=='inactive'){recorder.onstop=null;try{recorder.stop()}catch{}}
+  micStream?.getTracks().forEach(t=>t.stop());micStream=null;
+  try{micSrc?.disconnect()}catch{}
+  micCtx?.close().catch(()=>{});micCtx=null;micSrc=null;analyser=null;
+  setMic(msg||'🎙️ Microphone off');
+}
+window.addEventListener('pagehide',()=>releaseMic());
+
+/* ---------- Recording (stopping a recording never stops the mic) ---------- */
+async function startRec(){
+  if(state!=='waiting')return;
+  try{await getMic();await micCtx.resume()}catch(e){micError(e);return}
+  chunks=[];
+  const mime=MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':(MediaRecorder.isTypeSupported('audio/mp4')?'audio/mp4':'');
+  recorder=new MediaRecorder(micStream,mime?{mimeType:mime}:undefined);
+  recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+  recorder.onstop=recognise;
+  recorder.start();
+  recStart=performance.now();lastVoice=recStart;heardVoice=false;
+  $('mic').classList.add('rec');
+  $('status').textContent='🔴 Listening… say the word.';
+  setMic('🔴 Recording');
+  setState('recording');
+  $('mic').hidden=false;
+  loop();
+}
+function loop(){
+  if(!analyser)return;
+  const buf=new Uint8Array(analyser.fftSize);analyser.getByteTimeDomainData(buf);
+  let sum=0;for(const v of buf){const x=(v-128)/128;sum+=x*x}
+  const rms=Math.sqrt(sum/buf.length),now=performance.now();
+  if(rms>0.04){heardVoice=true;lastVoice=now}
+  const c=$('wave'),g=c.getContext('2d');
+  g.clearRect(0,0,c.width,c.height);g.strokeStyle='#1769d2';g.lineWidth=2;g.beginPath();
+  for(let i=0;i<buf.length;i++){const x=i/buf.length*c.width,y=buf[i]/255*c.height;i?g.lineTo(x,y):g.moveTo(x,y)}
+  g.stroke();
+  if((heardVoice&&now-lastVoice>1100)||now-recStart>6000){stopRec();return}
+  raf=requestAnimationFrame(loop);
+}
+function stopRec(){
+  cancelAnimationFrame(raf);
+  $('mic').classList.remove('rec');
+  if(recorder&&recorder.state!=='inactive')recorder.stop();   // tracks stay live
+  setState('thinking');
+  $('status').textContent='🧠 Recognising locally…';
+}
+$('mic').onclick=startRec;$('stopBtn').onclick=stopRec;
+
+async function recognise(){
+  setMic('⏳ Processing audio…');
+  try{
+    if(!heardVoice){fail('empty');return}
+    const blob=new Blob(chunks,{type:recorder.mimeType||'audio/webm'});
+    const ctx=new AudioContext();
+    const decoded=await ctx.decodeAudioData(await blob.arrayBuffer());
+    const off=new OfflineAudioContext(1,Math.ceil(decoded.duration*16000),16000);
+    const src=off.createBufferSource();src.buffer=decoded;src.connect(off.destination);src.start(0);
+    const audio=(await off.startRendering()).getChannelData(0);
+    await ctx.close();
+    const out=await transcriber(audio);
+    const raw=(out?.text||'').replace(/\[[^\]]*\]|\([^)]*\)/g,'').trim();
+    if(!raw){fail('empty');return}
+    judge(raw);
+  }catch(e){console.error(e);$('status').textContent='Audio error: '+(e?.message||e);setState('waiting')}
+}
+const clean=s=>s.toLowerCase().replace(/[^a-z0-9' ]/g,' ').replace(/\s+/g,' ').trim();
+function judge(raw){
+  attempts++;setMic('✅ Recognition completed · microphone ready');
+  const target=clean(words[idx]),heard=clean(raw);
+  const tokens=heard.split(' ');
+  const ok=heard===target||(!target.includes(' ')&&tokens.length<=3&&tokens.every(t=>t===target));
+  $('heard').textContent='AI heard: “'+raw+'”';
+  if(ok){
+    correct++;score+=10;updateStats();
+    banner('CORRECT!','#7CFF8A');tone([523,659,784,1047]);
+    setState('jumping');$('status').textContent='Great job!';
+    dino.className='jump';scene.classList.add('moving');
+    cactus.style.transition='left 1.3s linear';cactus.style.left='-20%';
+    setTimeout(((g)=>()=>{
+      if(g!==gen)return;
+      idx++;
+      if(idx>=words.length)finish();else showWord();
+    })(gen),1500);
+  }else{
+    updateStats();banner('TRY AGAIN!','#ffb74d');tone([300,220],.2,'sawtooth');
+    $('status').textContent='Not quite. Tap the microphone and try again.';
+    setState('waiting');
+  }
+}
+function fail(kind){
+  setMic('✅ Recognition completed · microphone ready');
+  $('heard').textContent="I couldn't recognize your voice. Please try again.";
+  banner('TRY AGAIN!','#ffb74d');tone([300,220],.2,'sawtooth');
+  $('status').textContent='Tap the microphone and speak clearly.';
+  setState('waiting');
+}
+function finish(){
+  scene.classList.remove('moving');dino.className='idle';
+  setState('end');
+  const acc=attempts?Math.round(correct/attempts*100):0;
+  $('vText').innerHTML=`Final score: <b>${score}</b><br>Correct words: <b>${correct}/${words.length}</b><br>Total attempts: <b>${attempts}</b> (${acc}% accuracy)`;
+  $('victory').classList.remove('hide');tone([523,659,784,1047,1319],.18);
+  $('startBtn').textContent='▶ Start Game';
+}
+
+/* ---------- Buttons / teacher panel ---------- */
+$('startBtn').onclick=()=>{sfx=sfx||new AudioContext();getMic().catch(micError);newGame(false)};
+$('newBtn').onclick=()=>{if(transcriber){sfx=sfx||new AudioContext();newGame(false)}};
+$('againBtn').onclick=()=>newGame(false);
+$('restartBtn').onclick=()=>newGame(true);
+$('shuffleBtn').onclick=()=>{$('list').value=shuffle(parseList()).join('\n')};
+$('preset').onchange=e=>{if(PRESETS[e.target.value])$('list').value=PRESETS[e.target.value]};
+$('micOffBtn').onclick=()=>releaseMic('🎙️ Microphone turned off. It will be requested again when needed.');
+$('exitBtn').onclick=()=>{gen++;releaseMic('🎙️ Microphone released (game exited)');scene.classList.remove('moving');dino.className='idle';$('victory').classList.add('hide');$('word').textContent='ENGLISH DINO';$('heard').textContent='';$('status').textContent='Game exited. Press Start Game to play again.';setState(transcriber?'ready':'boot')};
+
+/* ---------- Offline readiness check ---------- */
+const MODEL_FILES=['config.json','generation_config.json','preprocessor_config.json','tokenizer.json','tokenizer_config.json','encoder_model_quantized.onnx','decoder_model_merged_quantized.onnx'];
+const keysOf=async n=>(await (await caches.open(n)).keys()).map(r=>r.url.split('#')[0].split('?')[0]);
+async function checkOffline(){
+  const out=$('chk'),badges=$('badges');out.innerHTML='';badges.textContent='Checking…';
+  const flags=[];
+  const add=(l,ok,d)=>{flags.push(ok);const li=document.createElement('li');li.textContent=l+': '+(ok?'READY':'NOT READY')+(d?' — '+d:'');li.style.color=ok?'#126437':'#b3261e';out.appendChild(li);return ok};
+  let swOk=false,gameOk=false;
+  try{
+    swOk=!!navigator.serviceWorker?.controller;
+    add('Service worker controlling this page',swOk,swOk?'':(swResult!=='ok'?swResult:'reload the page once online'));
+    const shell=await keysOf('dino-shell-v2');
+    gameOk=shell.some(u=>u.endsWith('english_dino_speaking_challenge.html')||u===location.href.split('#')[0].split('?')[0]);
+    add('Game files cached',gameOk,gameOk?'':'run from HTTPS/localhost and reload');
+    const lib=await keysOf('dino-lib-v1');
+    add('Transformers.js cached',lib.some(u=>/transformers/.test(u)&&u.endsWith('.js')),'');
+    add('ONNX Runtime (WASM) cached',lib.some(u=>u.endsWith('.wasm')),'');
+    const model=(await keysOf('transformers-cache')).filter(u=>u.includes('whisper-tiny.en'));
+    for(const f of MODEL_FILES)add('Model file '+f,model.some(u=>u.endsWith('/'+f)),'');
+  }catch(e){add('Cache access',false,e?.message||e)}
+  if(transcriber){
+    try{await transcriber(new Float32Array(16000));add('Inference test',true,'ran on 1 s of silence with the model loaded')}
+    catch(e){add('Inference test',false,e?.message||e)}
+  }else add('Inference test',false,'model not loaded yet');
+  const all=flags.every(Boolean);
+  const bd=(t,ok)=>`<span class="badge ${ok?'ok':'no'}">${t}</span>`;
+  badges.innerHTML=bd('GAME READY',swOk&&gameOk)+bd('AI MODEL READY',!!transcriber)+bd('OFFLINE READY',all)+
+   '<div class="tip" style="text-align:left">'+(all?'All required files are in the browser cache. To confirm, disconnect the Internet, reload, and play one word.':'Some required files are missing. Stay online, reload the page and let the model finish loading, then check again.')+'</div>';
+}
+$('chkBtn').onclick=checkOffline;
+updateStats();setState('boot');
+loadModel();
+</script>
+<script>
+/* Visual-only helper (read-only): mirrors existing text into CSS hooks. It never writes to game state. */
+(()=>{
+  const $=id=>document.getElementById(id);
+  const prog=()=>{
+    const m=($('sWord').textContent||'').match(/(\d+)\s*\/\s*(\d+)/),done=parseInt($('sCorrect').textContent,10)||0;
+    const total=m?+m[2]:0,pct=total?Math.min(100,Math.round(done/total*100)):0;
+    $('progFill').style.setProperty('--p',pct);
+    $('progFill').parentElement.setAttribute('aria-valuenow',pct);
+  };
+  const mic=()=>{
+    const t=$('micState').textContent;
+    document.body.dataset.mic=/Requesting/.test(t)?'asking':/🔴/.test(t)?'rec':/Processing/.test(t)?'proc':/completed/.test(t)?'done':/❌|⚠️/.test(t)?'err':/ready/i.test(t)?'ready':'off';
+  };
+  const o={childList:true,characterData:true,subtree:true};
+  ['sWord','sCorrect'].forEach(i=>new MutationObserver(prog).observe($(i),o));
+  new MutationObserver(mic).observe($('micState'),o);
+  prog();mic();
+})();
+</script>
+</body>
+</html>
